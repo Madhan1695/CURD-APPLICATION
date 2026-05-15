@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CRUD App</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f4f4;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .add-btn {
+      background: green;
+      color: white;
+    }
+
+    .edit-btn {
+      background: orange;
+      color: white;
+    }
+
+    .delete-btn {
+      background: red;
+      color: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th,
+    table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+
+    table th {
+      background: #333;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>CRUD Operation</h1>
+
+    <div class="form-group">
+      <input type="text" id="name" placeholder="Enter Name">
+      <button class="add-btn" onclick="addOrUpdateUser()">
+        Save
+      </button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody id="userTableBody">
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    let users = [];
+    let editIndex = -1;
+
+    function renderUsers() {
+      const tableBody = document.getElementById("userTableBody");
+
+      tableBody.innerHTML = "";
+
+      users.forEach((user, index) => {
+        tableBody.innerHTML += `
+          <tr>
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>
+              <button class="edit-btn" onclick="editUser(${index})">
+                Edit
+              </button>
+
+              <button class="delete-btn" onclick="deleteUser(${index})">
+                Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function addOrUpdateUser() {
+      const nameInput = document.getElementById("name");
+      const name = nameInput.value.trim();
+
+      if (name === "") {
+        alert("Please enter a name");
+        return;
+      }
+
+      if (editIndex === -1) {
+        // CREATE
+        const user = {
+          id: users.length + 1,
+          name: name
+        };
+
+        users.push(user);
+
+      } else {
+        // UPDATE
+        users[editIndex].name = name;
+        editIndex = -1;
+      }
+
+      nameInput.value = "";
+      renderUsers();
+    }
+
+    function editUser(index) {
+      // READ + UPDATE
+      document.getElementById("name").value = users[index].name;
+      editIndex = index;
+    }
+
+    function deleteUser(index) {
+      // DELETE
+      users.splice(index, 1);
+
+      // Reset IDs
+      users = users.map((user, i) => ({
+        id: i + 1,
+        name: user.name
+      }));
+
+      renderUsers();
+    }
+
+    // Initial render
+    renderUsers();
+  </script>
+
+</body>
+</html>
